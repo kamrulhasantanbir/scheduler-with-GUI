@@ -41,17 +41,17 @@ GtkWidget *new_window3, *image3, *label11, *entry6, *label12, *label13, *entry7,
 //widget for print_specific
 GtkWidget *label16;
 
+
+
+
 char* minute_to_IMp(int time) //return time in I:M p format 
 {     
     static char ftime[200]; 
     char M1[10] ;
     int hour1, minute1;
-
-    
     hour1 = time / 60;
     minute1 = time - hour1 * 60;
 
-    
     if (hour1 >= 12) 
     {
         strcpy(M1, "PM"); 
@@ -65,7 +65,6 @@ char* minute_to_IMp(int time) //return time in I:M p format
         strcpy(M1, "AM");
     }
     
-    
     if (hour1 == 0) 
     {
         hour1 = 12; 
@@ -76,10 +75,13 @@ char* minute_to_IMp(int time) //return time in I:M p format
     return ftime; 
 }
 
+
+
+
+
 int IMp_to_minute(int hour, int minute, int am_pm)  //returns minutes from midnight (12:00AM)
 {
     int total_times = 0;
-    
     if (am_pm == 1 && hour != 12) 
     { 
         hour += 12;
@@ -90,9 +92,12 @@ int IMp_to_minute(int hour, int minute, int am_pm)  //returns minutes from midni
     }
   
     total_times = hour * 60 + minute;
-
     return total_times;
 }
+
+
+
+
 
 void full_print()
 {
@@ -103,7 +108,6 @@ void full_print()
     char filename[100];
     strcpy(filename, user_name);
     strcat(filename, ".txt");
-
     FILE*file=fopen(filename, "r");
 
     if(file)
@@ -113,7 +117,6 @@ void full_print()
         {
             i++;
         }
-
         for(int j=0; j < i-1; j++)
         {
             if(j % 2 == 0)  //time
@@ -144,13 +147,16 @@ void full_print()
     gtk_widget_show_all(new_window2);
 }
 
+
+
+
+
 void print_specific()
 {
     char temp[1000][1000];
     char temp3[1000];
 
     const char *user_name = gtk_entry_get_text(GTK_ENTRY(entry6));
-
     const char *hour_text = gtk_entry_get_text(GTK_ENTRY(entry7));
     const char *minute_text = gtk_entry_get_text(GTK_ENTRY(entry8));
     int AmPm = gtk_combo_box_get_active(GTK_COMBO_BOX(combo2));
@@ -160,7 +166,6 @@ void print_specific()
     char filename[100];
     strcpy(filename, user_name);
     strcat(filename, ".txt");
-
     FILE*file=fopen(filename, "r");
     if(file)
     {
@@ -169,7 +174,6 @@ void print_specific()
         {
             i++;
         }
-
         bool found = false;
         char activity[1000];
         strcpy(activity, "Activity : ");
@@ -211,6 +215,9 @@ void print_specific()
     gtk_widget_show_all(new_window3);
 }
 
+
+
+
 void input_receiver()
 {
     int hour;
@@ -232,26 +239,18 @@ void input_receiver()
         AmPm = gtk_combo_box_get_active(GTK_COMBO_BOX(array7[i]));
 
         total_time = IMp_to_minute(hour,min,AmPm);
-
         fprintf(insert, "%d\n", total_time);
-
         const char *activity = gtk_entry_get_text(GTK_ENTRY(array9[i]));
-
         fprintf(insert, "%s\n", activity);
     }
 
     const char *hour_text = gtk_entry_get_text(GTK_ENTRY(entry3));
     hour = atoi(hour_text);
-
     const char *min_text = gtk_entry_get_text(GTK_ENTRY(entry4));
     min = atoi(min_text) + 1;
-
     AmPm = gtk_combo_box_get_active(GTK_COMBO_BOX(combo1));
-
     total_time = IMp_to_minute(hour,min,AmPm);
-
     fprintf(insert, "%d\n", total_time);
-
     fclose(insert);
 
     gtk_container_remove(GTK_CONTAINER(scrolled_window), fixed2);
@@ -262,17 +261,16 @@ void input_receiver()
 
 }
 
+
+
+
 void file_opener() 
 {
     const char *act_count_str = gtk_entry_get_text(GTK_ENTRY(entry2));  
     act_count = atoi(act_count_str);  
-
     const char *user_name = gtk_entry_get_text(GTK_ENTRY(entry1));
-    
     snprintf(filename, sizeof(filename), "%s.txt", user_name);
-
     FILE *file = fopen(filename, "r");
-
     if (file) 
     {
         fclose(file);
@@ -349,6 +347,9 @@ void file_opener()
     gtk_widget_show_all(new_window1);
 }
 
+
+
+
 void on_about() 
 {
     GtkWidget *new_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -369,6 +370,9 @@ void on_about()
     
     gtk_widget_show_all(new_window);
 }
+
+
+
 
 void show_activity() 
 {
@@ -413,6 +417,9 @@ void show_activity()
     gtk_widget_show_all(new_window3);
 }
 
+
+
+
 void print_full_schedule() 
 {
     new_window2 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -432,7 +439,6 @@ void print_full_schedule()
     
     gtk_container_add(GTK_CONTAINER(new_window2), fixed3);
     
-
     gtk_fixed_put(GTK_FIXED(fixed3), image2, 0, 0);
     gtk_fixed_put(GTK_FIXED(fixed3), label9, 100, 50);
     gtk_fixed_put(GTK_FIXED(fixed3), entry5, 300, 50);
@@ -444,6 +450,9 @@ void print_full_schedule()
 
     gtk_widget_show_all(new_window2);
 }
+
+
+
 
 void add_schedule() 
 {
@@ -478,18 +487,19 @@ void add_schedule()
     gtk_widget_show_all(new_window1);
 }
 
+
+
+
 int main() 
 {
     gtk_init(NULL, NULL);
-
-    // Create main window
+    
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Scheduler");
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 700);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    // Create buttons and place them in the fixed layout
     fixed = gtk_fixed_new();
     gtk_container_add(GTK_CONTAINER(window), fixed);
 
