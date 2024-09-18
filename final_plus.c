@@ -41,15 +41,18 @@ GtkWidget *new_window3, *image3, *label11, *entry6, *label12, *label13, *entry7,
 //widget for print_specific
 GtkWidget *label16;
 
+
+
+
+
+
+
 char* minute_to_IMp(int time) {     //return time in I:M p format 
     static char ftime[200]; 
     char M1[10] ;
     int hour1, minute1;
-
-    
     hour1 = time / 60;
     minute1 = time- hour1*60;
-
     
     if (hour1 >= 12) {
         strcpy(M1, "PM"); 
@@ -61,30 +64,37 @@ char* minute_to_IMp(int time) {     //return time in I:M p format
         strcpy(M1,"AM");
     }
     
-    
     if (hour1 == 0) {
         hour1 = 12; 
     }
-
     sprintf(ftime, "%d:%02d %s", hour1, minute1, M1); 
-
     return ftime; 
 }
 
+
+
+
+
+
+
 int IMp_to_minute(int hour, int minute, int am_pm) {  //returns minutes from midnight (12:00AM)
     int total_times = 0;
-    
     if (am_pm == 1 && hour != 12) { 
         hour += 12;
     }
     if (am_pm == 0 && hour == 12) {   
         hour = 0;
     }
-  
     total_times = hour * 60 + minute;
-
     return total_times;
 }
+
+
+
+
+
+
+
 
 void full_print(){
 char temp[1000][1000];
@@ -96,7 +106,6 @@ strcpy(filename,user_name);
 strcat(filename,".txt");
 
 FILE*file=fopen(filename,"r");
-
 if(file){
 int i=0;
 while(fgets(temp[i],1000,file)){
@@ -119,7 +128,6 @@ strcat(temp3,temp[j]);
 label10=gtk_label_new(temp3);
 }
 
-
 else {
 label10=gtk_label_new("No schedule is found ");
 }
@@ -130,6 +138,13 @@ gtk_container_add(GTK_CONTAINER(scrolled_window1),label10);
 
 gtk_widget_show_all(new_window2);
 }
+
+
+
+
+
+
+
 
 void print_specific(){
 char temp[1000][1000];
@@ -192,12 +207,18 @@ gtk_fixed_put(GTK_FIXED(fixed4),label16,150,350);
 gtk_widget_show_all(new_window3);
 }
 
+
+
+
+
+
+
+
 void input_receiver(){
 int hour;
 int min;
 int AmPm;
 int total_time;
-
 
 FILE *insert=fopen(filename,"w");
 
@@ -218,10 +239,8 @@ fprintf(insert,"%d\n",total_time);
 const char *activity=gtk_entry_get_text(GTK_ENTRY(array9[i]));
 
 fprintf(insert,"%s\n",activity);
-
-
 }
-
+    
 const char *hour_text=gtk_entry_get_text(GTK_ENTRY(entry3));
 hour=atoi(hour_text);
 
@@ -243,6 +262,14 @@ gtk_container_remove(GTK_CONTAINER(scrolled_window), fixed2);
  gtk_widget_show_all(new_window1);
 
 }
+
+
+
+
+
+
+
+
 
 void file_opener() {
 
@@ -320,7 +347,6 @@ void file_opener() {
         gtk_fixed_put(GTK_FIXED(fixed2), submit_button1, 250, y + 200);
         
         g_signal_connect(submit_button1, "clicked", G_CALLBACK(input_receiver), NULL);
-
         
     }
     gtk_container_remove(GTK_CONTAINER(fixed1), submit_button);
@@ -331,6 +357,13 @@ void file_opener() {
     
     gtk_widget_show_all(new_window1);
 }
+
+
+
+
+
+
+
 
 void on_about() {
     GtkWidget *new_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -351,6 +384,14 @@ void on_about() {
     
     gtk_widget_show_all(new_window);
 }
+
+
+
+
+
+
+
+
 
 void show_activity() {
     new_window3 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -394,6 +435,15 @@ void show_activity() {
     gtk_widget_show_all(new_window3);
 }
 
+
+
+
+
+
+
+
+
+
 void print_full_schedule() {
     new_window2 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(new_window2), "Print full schedule");
@@ -412,18 +462,23 @@ void print_full_schedule() {
     
     gtk_container_add(GTK_CONTAINER(new_window2), fixed3);
     
-
     gtk_fixed_put(GTK_FIXED(fixed3), image2, 0, 0);
     gtk_fixed_put(GTK_FIXED(fixed3), label9, 100, 50);
     gtk_fixed_put(GTK_FIXED(fixed3), entry5, 300, 50);
     gtk_fixed_put(GTK_FIXED(fixed3), submit_button2, 250, 100);
-    gtk_fixed_put(GTK_FIXED(fixed3), scrolled_window1, 0, 150);
-    
+    gtk_fixed_put(GTK_FIXED(fixed3), scrolled_window1, 0, 150); 
     
     g_signal_connect(submit_button2,"clicked",G_CALLBACK(full_print),NULL);
 
     gtk_widget_show_all(new_window2);
 }
+
+
+
+
+
+
+
 
 void add_schedule() {
     new_window1 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -456,6 +511,14 @@ void add_schedule() {
 
     gtk_widget_show_all(new_window1);
 }
+
+
+
+
+
+
+
+
 
 int main() {
     gtk_init(NULL, NULL);
@@ -496,6 +559,5 @@ int main() {
 
     gtk_widget_show_all(window);
     gtk_main();
-
     return 0;
 }
