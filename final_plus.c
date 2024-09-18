@@ -41,238 +41,229 @@ GtkWidget *new_window3, *image3, *label11, *entry6, *label12, *label13, *entry7,
 //widget for print_specific
 GtkWidget *label16;
 
-
-
-
-
-
-
-char* minute_to_IMp(int time) {     //return time in I:M p format 
+char* minute_to_IMp(int time) //return time in I:M p format 
+{     
     static char ftime[200]; 
     char M1[10] ;
     int hour1, minute1;
-    hour1 = time / 60;
-    minute1 = time- hour1*60;
+
     
-    if (hour1 >= 12) {
+    hour1 = time / 60;
+    minute1 = time - hour1 * 60;
+
+    
+    if (hour1 >= 12) 
+    {
         strcpy(M1, "PM"); 
-        if (hour1 > 12) {
+        if (hour1 > 12) 
+        {
             hour1 -= 12;  
         }
     }
-    else {
-        strcpy(M1,"AM");
+    else 
+    {
+        strcpy(M1, "AM");
     }
     
-    if (hour1 == 0) {
+    
+    if (hour1 == 0) 
+    {
         hour1 = 12; 
     }
+
     sprintf(ftime, "%d:%02d %s", hour1, minute1, M1); 
+
     return ftime; 
 }
 
-
-
-
-
-
-
-int IMp_to_minute(int hour, int minute, int am_pm) {  //returns minutes from midnight (12:00AM)
+int IMp_to_minute(int hour, int minute, int am_pm)  //returns minutes from midnight (12:00AM)
+{
     int total_times = 0;
-    if (am_pm == 1 && hour != 12) { 
+    
+    if (am_pm == 1 && hour != 12) 
+    { 
         hour += 12;
     }
-    if (am_pm == 0 && hour == 12) {   
+    if (am_pm == 0 && hour == 12) 
+    {   
         hour = 0;
     }
+  
     total_times = hour * 60 + minute;
+
     return total_times;
 }
 
+void full_print()
+{
+    char temp[1000][1000];
+    char temp3[1000000];
+    strcpy(temp3, "Full schedule :\n");
+    const char *user_name=gtk_entry_get_text(GTK_ENTRY(entry5));
+    char filename[100];
+    strcpy(filename, user_name);
+    strcat(filename, ".txt");
 
+    FILE*file=fopen(filename, "r");
 
+    if(file)
+    {
+        int i=0;
+        while(fgets(temp[i], 1000, file))
+        {
+            i++;
+        }
 
+        for(int j=0; j < i-1; j++)
+        {
+            if(j % 2 == 0)  //time
+            {
+                char *s_time=minute_to_IMp(atoi(temp[j]));
+                strcat(temp3, s_time);
+                strcat(temp3, " -> ");
+                char *end_time = minute_to_IMp(atoi(temp[j+2]) - 1);
+                strcat(temp3, end_time);
+                strcat(temp3, "  :  ");
+            }
+            else    //activity
+            {
+                strcat(temp3, temp[j]);
+            }
+        }
+        label10 = gtk_label_new(temp3);
+    }
+    else
+    {
+        label10 = gtk_label_new("No schedule is found ");
+    }
+    gtk_container_remove(GTK_CONTAINER(fixed3), submit_button2);
+    gtk_container_remove(GTK_CONTAINER(fixed3), label9);
+    gtk_container_remove(GTK_CONTAINER(fixed3), entry5);
+    gtk_container_add(GTK_CONTAINER(scrolled_window1), label10);
 
-
-
-
-void full_print(){
-char temp[1000][1000];
-char temp3[1000000];
-strcpy(temp3,"Full schedule :\n");
-const char *user_name=gtk_entry_get_text(GTK_ENTRY(entry5));
-char filename[100];
-strcpy(filename,user_name);
-strcat(filename,".txt");
-
-FILE*file=fopen(filename,"r");
-if(file){
-int i=0;
-while(fgets(temp[i],1000,file)){
-    i++;
+    gtk_widget_show_all(new_window2);
 }
 
-for(int j=0;j<i-1;j++){
-if(j%2==0){  //time
-char *s_time=minute_to_IMp(atoi(temp[j]));
-strcat(temp3,s_time);
-strcat(temp3," -> ");
-char *end_time=minute_to_IMp(atoi(temp[j+2])-1);
-strcat(temp3,end_time);
-strcat(temp3,"  :  ");
-}
-else{  //activity
-strcat(temp3,temp[j]);
-}
-}
-label10=gtk_label_new(temp3);
-}
+void print_specific()
+{
+    char temp[1000][1000];
+    char temp3[1000];
 
-else {
-label10=gtk_label_new("No schedule is found ");
-}
-gtk_container_remove(GTK_CONTAINER(fixed3), submit_button2);
-gtk_container_remove(GTK_CONTAINER(fixed3), label9);
-gtk_container_remove(GTK_CONTAINER(fixed3), entry5);
-gtk_container_add(GTK_CONTAINER(scrolled_window1),label10);
+    const char *user_name = gtk_entry_get_text(GTK_ENTRY(entry6));
 
-gtk_widget_show_all(new_window2);
-}
+    const char *hour_text = gtk_entry_get_text(GTK_ENTRY(entry7));
+    const char *minute_text = gtk_entry_get_text(GTK_ENTRY(entry8));
+    int AmPm = gtk_combo_box_get_active(GTK_COMBO_BOX(combo2));
 
+    int time = IMp_to_minute(atoi(hour_text), atoi(minute_text), AmPm);
 
+    char filename[100];
+    strcpy(filename, user_name);
+    strcat(filename, ".txt");
 
+    FILE*file=fopen(filename, "r");
+    if(file)
+    {
+        int i = 0;
+        while(fgets(temp[i], 1000, file))
+        {
+            i++;
+        }
 
+        bool found = false;
+        char activity[1000];
+        strcpy(activity, "Activity : ");
 
+        for(int j=0; j < i-2; j=j+2)
+        {
+            if(atoi(temp[j]) <= time && time < atoi(temp[j+2]))
+            {
+                strcat(activity, temp[j+1]);
+                found = true;
+                break;
+            }
+        }
+        if (found == false)
+        {
+            strcat(activity, "not available");
+        }
 
+        label16 = gtk_label_new(activity);
+    }
+    else
+    {
+        label16 = gtk_label_new("No schedule is found");
+    }
 
+    gtk_container_remove(GTK_CONTAINER(fixed4), submit_button3);
+    gtk_container_remove(GTK_CONTAINER(fixed4), label11);
+    gtk_container_remove(GTK_CONTAINER(fixed4), label12);
+    gtk_container_remove(GTK_CONTAINER(fixed4), label13);
+    gtk_container_remove(GTK_CONTAINER(fixed4), label14);
+    gtk_container_remove(GTK_CONTAINER(fixed4), label15);
+    gtk_container_remove(GTK_CONTAINER(fixed4), entry6);
+    gtk_container_remove(GTK_CONTAINER(fixed4), entry7);
+    gtk_container_remove(GTK_CONTAINER(fixed4), entry8);
+    gtk_container_remove(GTK_CONTAINER(fixed4), combo2);
 
-void print_specific(){
-char temp[1000][1000];
-char temp3[1000];
+    gtk_fixed_put(GTK_FIXED(fixed4), label16, 150, 350);
 
-const char *user_name=gtk_entry_get_text(GTK_ENTRY(entry6));
-
-const char *hour_text=gtk_entry_get_text(GTK_ENTRY(entry7));
-const char *minute_text=gtk_entry_get_text(GTK_ENTRY(entry8));
-int AmPm=gtk_combo_box_get_active(GTK_COMBO_BOX(combo2));
-
-int time=IMp_to_minute(atoi(hour_text),atoi(minute_text),AmPm);
-
-char filename[100];
-strcpy(filename,user_name);
-strcat(filename,".txt");
-
-FILE*file=fopen(filename,"r");
-if(file){
-int i=0;
-while(fgets(temp[i],1000,file)){
-    i++;
-}
-
-bool found=false;
-char activity[1000];
-strcpy(activity,"Activity : ");
-
-for(int j=0;j<i-2;j=j+2){
-if(atoi(temp[j])<=time && time<atoi(temp[j+2])){
-strcat(activity,temp[j+1]);
-found=true;
-break;
-}
-}
-if(found==false){
-strcat(activity,"not available");
+    gtk_widget_show_all(new_window3);
 }
 
-label16=gtk_label_new(activity);
-}
+void input_receiver()
+{
+    int hour;
+    int min;
+    int AmPm;
+    int total_time;
 
-else{
-label16=gtk_label_new("No schedule is found");
-}
+    FILE *insert=fopen(filename, "w");
 
-gtk_container_remove(GTK_CONTAINER(fixed4), submit_button3);
-gtk_container_remove(GTK_CONTAINER(fixed4), label11);
-gtk_container_remove(GTK_CONTAINER(fixed4), label12);
-gtk_container_remove(GTK_CONTAINER(fixed4), label13);
-gtk_container_remove(GTK_CONTAINER(fixed4), label14);
-gtk_container_remove(GTK_CONTAINER(fixed4), label15);
-gtk_container_remove(GTK_CONTAINER(fixed4), entry6);
-gtk_container_remove(GTK_CONTAINER(fixed4), entry7);
-gtk_container_remove(GTK_CONTAINER(fixed4), entry8);
-gtk_container_remove(GTK_CONTAINER(fixed4), combo2);
+    for(int i=0; i < act_count; i++)
+    {
 
-gtk_fixed_put(GTK_FIXED(fixed4),label16,150,350);
+        const char *hour_text = gtk_entry_get_text(GTK_ENTRY(array3[i]));
+        hour = atoi(hour_text);
 
-gtk_widget_show_all(new_window3);
-}
+        const char *min_text = gtk_entry_get_text(GTK_ENTRY(array5[i]));
+        min = atoi(min_text);
 
+        AmPm = gtk_combo_box_get_active(GTK_COMBO_BOX(array7[i]));
 
+        total_time = IMp_to_minute(hour,min,AmPm);
 
+        fprintf(insert, "%d\n", total_time);
 
+        const char *activity = gtk_entry_get_text(GTK_ENTRY(array9[i]));
 
+        fprintf(insert, "%s\n", activity);
+    }
 
+    const char *hour_text = gtk_entry_get_text(GTK_ENTRY(entry3));
+    hour = atoi(hour_text);
 
+    const char *min_text = gtk_entry_get_text(GTK_ENTRY(entry4));
+    min = atoi(min_text) + 1;
 
-void input_receiver(){
-int hour;
-int min;
-int AmPm;
-int total_time;
+    AmPm = gtk_combo_box_get_active(GTK_COMBO_BOX(combo1));
 
-FILE *insert=fopen(filename,"w");
+    total_time = IMp_to_minute(hour,min,AmPm);
 
-for(int i=0;i<act_count;i++){
+    fprintf(insert, "%d\n", total_time);
 
-const char *hour_text=gtk_entry_get_text(GTK_ENTRY(array3[i]));
-hour=atoi(hour_text);
+    fclose(insert);
 
-const char *min_text=gtk_entry_get_text(GTK_ENTRY(array5[i]));
-min=atoi(min_text);
+    gtk_container_remove(GTK_CONTAINER(scrolled_window), fixed2);
 
-AmPm=gtk_combo_box_get_active(GTK_COMBO_BOX(array7[i]));
-
-total_time=IMp_to_minute(hour,min,AmPm);
-
-fprintf(insert,"%d\n",total_time);
-
-const char *activity=gtk_entry_get_text(GTK_ENTRY(array9[i]));
-
-fprintf(insert,"%s\n",activity);
-}
-    
-const char *hour_text=gtk_entry_get_text(GTK_ENTRY(entry3));
-hour=atoi(hour_text);
-
-const char *min_text=gtk_entry_get_text(GTK_ENTRY(entry4));
-min=atoi(min_text)+1;
-
-AmPm=gtk_combo_box_get_active(GTK_COMBO_BOX(combo1));
-
-total_time=IMp_to_minute(hour,min,AmPm);
-
-fprintf(insert,"%d\n",total_time);
-
-fclose(insert);
-
-gtk_container_remove(GTK_CONTAINER(scrolled_window), fixed2);
-
- label8 = gtk_label_new("Schedule is added successfully");
- gtk_fixed_put(GTK_FIXED(fixed1), label8, 180, 15);
- gtk_widget_show_all(new_window1);
+    label8 = gtk_label_new("Schedule is added successfully");
+    gtk_fixed_put(GTK_FIXED(fixed1), label8, 180, 15);
+    gtk_widget_show_all(new_window1);
 
 }
 
-
-
-
-
-
-
-
-
-void file_opener() {
-
+void file_opener() 
+{
     const char *act_count_str = gtk_entry_get_text(GTK_ENTRY(entry2));  
     act_count = atoi(act_count_str);  
 
@@ -282,23 +273,24 @@ void file_opener() {
 
     FILE *file = fopen(filename, "r");
 
-    if (file) {
+    if (file) 
+    {
         fclose(file);
-            label7 = gtk_label_new("A schedule already exists with the same name.");
-            gtk_fixed_put(GTK_FIXED(fixed1), label7, 150, 220);
-    } 
-    
-    else {
-
+        label7 = gtk_label_new("A schedule already exists with the same name.");
+        gtk_fixed_put(GTK_FIXED(fixed1), label7, 150, 220);
+    }  
+    else 
+    {
         scrolled_window = gtk_scrolled_window_new(NULL, NULL);
         gtk_widget_set_size_request(scrolled_window, 600, 650);
-        gtk_fixed_put(GTK_FIXED(fixed1), scrolled_window, 0,0);
+        gtk_fixed_put(GTK_FIXED(fixed1), scrolled_window, 0, 0);
         fixed2 = gtk_fixed_new();
         gtk_container_add(GTK_CONTAINER(scrolled_window), fixed2);
         
         int x = 135;
         int y = 10;
-        for (int i = 0; i < act_count; i++) {
+        for (int i = 0; i < act_count; i++) 
+        {
             char arr[1000];
             sprintf(arr, "Enter starting time of activity no. %d:", i + 1);
             array1[i] = gtk_label_new(arr);
@@ -346,8 +338,7 @@ void file_opener() {
         gtk_fixed_put(GTK_FIXED(fixed2), combo1, x + 190, y + 150);
         gtk_fixed_put(GTK_FIXED(fixed2), submit_button1, 250, y + 200);
         
-        g_signal_connect(submit_button1, "clicked", G_CALLBACK(input_receiver), NULL);
-        
+        g_signal_connect(submit_button1, "clicked", G_CALLBACK(input_receiver), NULL);   
     }
     gtk_container_remove(GTK_CONTAINER(fixed1), submit_button);
     gtk_container_remove(GTK_CONTAINER(fixed1), label1);
@@ -358,14 +349,8 @@ void file_opener() {
     gtk_widget_show_all(new_window1);
 }
 
-
-
-
-
-
-
-
-void on_about() {
+void on_about() 
+{
     GtkWidget *new_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(new_window), "About Us");
     gtk_window_set_default_size(GTK_WINDOW(new_window), 400, 700);
@@ -385,15 +370,8 @@ void on_about() {
     gtk_widget_show_all(new_window);
 }
 
-
-
-
-
-
-
-
-
-void show_activity() {
+void show_activity() 
+{
     new_window3 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(new_window3), "Show Activity (Specific Time)");
     gtk_window_set_default_size(GTK_WINDOW(new_window3), 600, 700);
@@ -435,16 +413,8 @@ void show_activity() {
     gtk_widget_show_all(new_window3);
 }
 
-
-
-
-
-
-
-
-
-
-void print_full_schedule() {
+void print_full_schedule() 
+{
     new_window2 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(new_window2), "Print full schedule");
     gtk_window_set_default_size(GTK_WINDOW(new_window2), 600, 700);
@@ -457,30 +427,26 @@ void print_full_schedule() {
     submit_button2 = gtk_button_new_with_label("Submit");
 
     fixed3 = gtk_fixed_new();
-    scrolled_window1=gtk_scrolled_window_new(NULL, NULL);
+    scrolled_window1 = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_size_request(scrolled_window1, 600, 550);
     
     gtk_container_add(GTK_CONTAINER(new_window2), fixed3);
     
+
     gtk_fixed_put(GTK_FIXED(fixed3), image2, 0, 0);
     gtk_fixed_put(GTK_FIXED(fixed3), label9, 100, 50);
     gtk_fixed_put(GTK_FIXED(fixed3), entry5, 300, 50);
     gtk_fixed_put(GTK_FIXED(fixed3), submit_button2, 250, 100);
-    gtk_fixed_put(GTK_FIXED(fixed3), scrolled_window1, 0, 150); 
+    gtk_fixed_put(GTK_FIXED(fixed3), scrolled_window1, 0, 150);
+    
     
     g_signal_connect(submit_button2,"clicked",G_CALLBACK(full_print),NULL);
 
     gtk_widget_show_all(new_window2);
 }
 
-
-
-
-
-
-
-
-void add_schedule() {
+void add_schedule() 
+{
     new_window1 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(new_window1), "Add Schedule");
     gtk_window_set_default_size(GTK_WINDOW(new_window1), 600, 700);
@@ -512,15 +478,8 @@ void add_schedule() {
     gtk_widget_show_all(new_window1);
 }
 
-
-
-
-
-
-
-
-
-int main() {
+int main() 
+{
     gtk_init(NULL, NULL);
 
     // Create main window
@@ -559,5 +518,6 @@ int main() {
 
     gtk_widget_show_all(window);
     gtk_main();
+
     return 0;
 }
