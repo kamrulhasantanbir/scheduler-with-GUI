@@ -343,7 +343,7 @@ void on_about() {
     GtkWidget *image = gtk_image_new_from_file("/home/tanbir/Downloads/bg2.jpeg");
     GtkWidget *fixed = gtk_fixed_new();
     GtkWidget *label = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(label), "<a href=\"https://github.com/kamrulhasantanbir/Scheduler\">Rate us</a>");
+    gtk_label_set_markup(GTK_LABEL(label), "<a href=\"https://github.com/kamrulhasantanbir/scheduler-with-GUI\">Rate us</a>");
     
     gtk_container_add(GTK_CONTAINER(new_window), fixed);
     
