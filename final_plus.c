@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
@@ -340,7 +339,7 @@ void on_about() {
     gtk_window_set_resizable(GTK_WINDOW(new_window), FALSE);
     g_signal_connect(new_window, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 
-    GtkWidget *image = gtk_image_new_from_file("/home/tanbir/Downloads/bg2.jpeg");
+    GtkWidget *image = gtk_image_new_from_file("bg2.jpeg");
     GtkWidget *fixed = gtk_fixed_new();
     GtkWidget *label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label), "<a href=\"https://github.com/kamrulhasantanbir/scheduler-with-GUI\">Rate us</a>");
@@ -360,7 +359,7 @@ void show_activity() {
     gtk_window_set_resizable(GTK_WINDOW(new_window3), FALSE);
     g_signal_connect(new_window3, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
     
-    image3 = gtk_image_new_from_file("/home/tanbir/Downloads/bg1.jpeg");
+    image3 = gtk_image_new_from_file("bg1.jpeg");
     label11 = gtk_label_new("Enter name here: ");
     entry6 = gtk_entry_new();
     label12 = gtk_label_new("Enter time here: ");
@@ -402,7 +401,7 @@ void print_full_schedule() {
     gtk_window_set_resizable(GTK_WINDOW(new_window2), FALSE);
     g_signal_connect(new_window2, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 
-    image2 = gtk_image_new_from_file("/home/tanbir/Downloads/bg1.jpeg");
+    image2 = gtk_image_new_from_file("bg1.jpeg");
     label9 = gtk_label_new("Enter name here : ");
     entry5 = gtk_entry_new();
     submit_button2 = gtk_button_new_with_label("Submit");
@@ -433,7 +432,7 @@ void add_schedule() {
     gtk_window_set_resizable(GTK_WINDOW(new_window1), FALSE);
     g_signal_connect(new_window1, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 
-    image1 = gtk_image_new_from_file("/home/tanbir/Downloads/bg1.jpeg");
+    image1 = gtk_image_new_from_file("bg1.jpeg");
 
     label1 = gtk_label_new("Enter your name here: ");
     entry1 = gtk_entry_new();
@@ -477,7 +476,7 @@ int main() {
     button3 = gtk_button_new_with_label("Show Activity (specific time)");
     button4 = gtk_button_new_with_label("About Us");
 
-    image = gtk_image_new_from_file("/home/tanbir/Downloads/bg3.jpeg");
+    image = gtk_image_new_from_file("bg3.jpeg");
     
     gtk_widget_set_size_request(button1, 230, 40);
     gtk_widget_set_size_request(button2, 230, 40);
